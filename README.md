@@ -8,22 +8,15 @@
 
 https://github.com/user-attachments/assets/a4d12bbd-ea8c-4935-abd8-c2434f406b71
 
-<table>
-  <tr>
-    <td width="50%" align="center">
-      <strong>中式天宫</strong>
+<table><tr><th width="50%">中式天宫</th><th width="50%">Last Seed</th></tr><tr><td>
 
 https://github.com/user-attachments/assets/4663648f-356a-4870-b5bc-1c453c0e53e2
 
-    </td>
-    <td width="50%" align="center">
-      <strong>Last Seed</strong>
+</td><td>
 
 https://github.com/user-attachments/assets/a58befe4-b510-40ed-a41c-c21fc11569a2
 
-    </td>
-  </tr>
-</table>
+</td></tr></table>
 
 以上视频均为 MiniMax H3 本地生成效果。短视频合集与中式天宫使用适合 GitHub
 展示的高清预览版本，原始视频未加入源码仓库。
