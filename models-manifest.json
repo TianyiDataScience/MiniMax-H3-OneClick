@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-27",
+  "minimumComfyUiVersion": "0.30.0",
+  "repository": "Comfy-Org/MiniMax-H3",
+  "estimatedModelBytes": 44426778471,
+  "minimumFreeGiB": 65,
+  "recommendedFreeGiB": 90,
+  "files": [
+    {
+      "name": "minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+      "relativePath": "models/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+      "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/diffusion_models/minimax_h3_fl2va_pruned_int8_convrot.safetensors?download=true",
+      "sizeBytes": 20970379616,
+      "sha256": "e889202c41dafb67b10d67b97f0d8541508036a6090af23425a5c2615d03c47a"
+    },
+    {
+      "name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "relativePath": "models/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors?download=true",
+      "sizeBytes": 15687142551,
+      "sha256": "35a88d51044231fe332301d7a62aa81e3f2cba62febeb446e2c1e3e0ef76f2c6"
+    },
+    {
+      "name": "minimax_h3_video_vae_fp16.safetensors",
+      "relativePath": "models/vae/minimax_h3_video_vae_fp16.safetensors",
+      "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_video_vae_fp16.safetensors?download=true",
+      "sizeBytes": 5207808496,
+      "sha256": "7c1f131492e7eddacaac9069a61b81bdd39de5cc96561e677c5eab1cdce5e522"
+    },
+    {
+      "name": "minimax_h3_audio_vae_fp32.safetensors",
+      "relativePath": "models/vae/minimax_h3_audio_vae_fp32.safetensors",
+      "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_audio_vae_fp32.safetensors?download=true",
+      "sizeBytes": 605254808,
+      "sha256": "8e505d95dd1561d47abd43d4238fd40d9bb1ae9e147ed0a4cba778d76ae4db48"
+    },
+    {
+      "name": "minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors",
+      "relativePath": "models/loras/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors",
+      "url": "https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/loras/minimax_h3_fl2v_turbo_8step_v1.0_comfyui_bf16.safetensors?download=true",
+      "sizeBytes": 1956193000,
+      "sha256": "2339acdf19bfe123f46b971ea35d367a84adb85de43627e1eceafa5a5b2b111e"
+    }
+  ]
+}

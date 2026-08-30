@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-08-27",
+  "remoteFiles": [
+    {
+      "name": "ComfyUI_windows_portable_nvidia.7z",
+      "version": "0.34.0",
+      "url": "https://github.com/Comfy-Org/ComfyUI/releases/download/v0.34.0/ComfyUI_windows_portable_nvidia.7z",
+      "sizeBytes": 2146721943,
+      "sha256": "ed57cc6b19ae3d83add1ecebfdd56b25e04e0008cf0fe9af43a4ad8797e2a24c"
+    },
+    {
+      "name": "7zr.exe",
+      "version": "official standalone extractor",
+      "url": "https://www.7-zip.org/a/7zr.exe",
+      "sizeBytes": 602112,
+      "sha256": "56b8cc9f4971cef253644fafe54063ed7fdca551d4dee0f8c6baa81b855acd72"
+    }
+  ],
+  "files": [
+    {
+      "relativePath": "workflows/official/OFFICIAL-H3-T2V.json",
+      "source": "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_minimax_h3_t2v.json",
+      "sha256": "2400b01a7c8acae3fed038c0372f08bacb90d2cdf915febadbe7e3f9802506ea"
+    },
+    {
+      "relativePath": "workflows/official/OFFICIAL-H3-I2V.json",
+      "source": "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_minimax_h3_i2v.json",
+      "sha256": "4dc94e9ea308c1d60409e7f55dba5e2788dab4659c2dbb90f1e9481498767540"
+    },
+    {
+      "relativePath": "assets/transparent_rgb_gaming_mouse.png",
+      "source": "https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/input/transparent_rgb_gaming_mouse.png",
+      "sha256": "49696748d2fff0e8c9b63c7173c6d6282b70eac0195def5b39402f9564410e75"
+    }
+  ]
+}

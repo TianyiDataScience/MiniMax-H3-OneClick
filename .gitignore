@@ -1,0 +1,45 @@
+# Downloaded runtimes, model weights, caches, generated media and local state
+runtime/
+downloads/
+projects/
+workflows/generated/
+output/
+input/
+models/
+user/
+
+# Interrupted or quarantined downloads
+*.part
+*.bad
+*.bad-*
+
+# Model and media files must never be committed
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.onnx
+*.gguf
+*.mp4
+*.mkv
+*.mov
+*.webm
+*.wav
+
+# Diagnostics may contain hardware details, paths, logs or prompts
+diagnostics/
+diagnostics-*.zip
+*.log
+
+# Editor, OS and archive artifacts
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.zip
+*.7z
+*.exe
+
+# Local test output
+test-results/

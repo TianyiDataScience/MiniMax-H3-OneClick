@@ -1,0 +1,46 @@
+name: Bug report
+description: Report a reproducible installer problem without private data.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not upload model weights, credentials, private prompts, or unredacted logs.
+  - type: input
+    id: version
+    attributes:
+      label: Installer version or commit
+    validations:
+      required: true
+  - type: input
+    id: launcher
+    attributes:
+      label: Full launcher path (redact username if necessary)
+    validations:
+      required: true
+  - type: textarea
+    id: system
+    attributes:
+      label: System
+      description: Windows version, GPU, VRAM, driver, RAM, and free disk space.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Redacted error excerpt
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy confirmation
+      options:
+        - label: I checked that this report contains no credentials, private prompts, model files, or unredacted personal paths.
+          required: true

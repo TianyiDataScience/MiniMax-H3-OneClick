@@ -1,0 +1,11 @@
+MiniMax H3 One-Click Installer
+Copyright (c) 2026 MiniMax H3 One-Click Installer contributors
+
+The MIT License in LICENSE applies only to this repository's original installer
+code and documentation. It does not relicense MiniMax H3, ComfyUI, PyTorch,
+7-Zip, the official ComfyUI workflows, or any other third-party component.
+
+MiniMax H3 is licensed under the MiniMax H3 Community License Agreement,
+Copyright (c) 2026 MiniMax. All Rights Reserved.
+
+See MODEL-LICENSE-NOTICE.md and THIRD-PARTY-NOTICES.md before installation.

@@ -1,0 +1,17 @@
+name: Validate package
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate release source
+        shell: pwsh
+        run: ./tests/Validate-Package.ps1
