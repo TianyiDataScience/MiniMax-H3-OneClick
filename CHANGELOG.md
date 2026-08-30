@@ -12,3 +12,6 @@
 - Improved launchers for ZIP/backup misuse and already-running ComfyUI instances.
 - Made diagnostic log collection opt-in and added privacy warnings.
 - Added repository validation, CI, contribution, security, privacy and release guidance.
+- Added location-independent Desktop and Start Menu shortcuts created after installation.
+- Added a shortcut rebuild tool for installations moved to a new folder.
+- Changed the missing-runtime path from a dead-end error into safe install guidance.

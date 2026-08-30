@@ -54,5 +54,8 @@ if errorlevel 1 (
 )
 
 echo.
-echo Installation finished. Run 03-LAUNCH-STABLE.cmd for the first test.
-pause
+echo Installation finished. Desktop and Start Menu shortcuts were created.
+choice /C YN /N /M "Launch ComfyUI now? [Y/N]: "
+if errorlevel 2 exit /b 0
+call "%ROOT%03-LAUNCH-STABLE.cmd"
+exit /b %ERRORLEVEL%

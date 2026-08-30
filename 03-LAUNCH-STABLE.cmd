@@ -12,15 +12,31 @@ if not exist "%PORTABLE%\python_embeded\python.exe" (
   echo Expected: %PORTABLE%\python_embeded\python.exe
   echo.
   echo Do not run this file inside a ZIP or from projects\...\00-Backups.
-  echo Extract the complete package, run 00-START-HERE.cmd there, and then
-  echo use the 03-LAUNCH-STABLE.cmd from that same installed folder.
+  echo Extract the complete package to a permanent short English path first.
+  echo.
+  set "H3_LAUNCH_ROOT=%ROOT%"
+  powershell.exe -NoProfile -Command "$r=[IO.Path]::GetFullPath($env:H3_LAUNCH_ROOT); $t=[IO.Path]::GetFullPath([IO.Path]::GetTempPath()); if ($r.StartsWith($t,[StringComparison]::OrdinalIgnoreCase)) { exit 0 } else { exit 1 }" >nul 2>nul
+  if not errorlevel 1 (
+    echo This launcher is running from the Windows temporary directory.
+    echo Close this window, extract the whole ZIP, then run 00-START-HERE.cmd.
+    pause
+    exit /b 1
+  )
+  if exist "%ROOT%00-START-HERE.cmd" (
+    choice /C YN /N /M "Run the installer in this folder now? [Y/N]: "
+    if errorlevel 2 exit /b 1
+    call "%ROOT%00-START-HERE.cmd"
+    exit /b
+  )
+  echo 00-START-HERE.cmd is not present beside this copied launcher.
+  echo Return to the complete extracted package and run its installer.
   pause
   exit /b 1
 )
 
 powershell.exe -NoProfile -Command "try { $r=Invoke-RestMethod -Uri 'http://127.0.0.1:8188/system_stats' -TimeoutSec 2; if ($r.devices) { exit 0 } }; exit 1" >nul 2>nul
 if not errorlevel 1 (
-  echo ComfyUI is already running at http://127.0.0.1:8188
+  echo An existing ComfyUI service is already running at http://127.0.0.1:8188
   start "" "http://127.0.0.1:8188"
   exit /b 0
 )

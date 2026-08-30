@@ -18,8 +18,7 @@ https://github.com/user-attachments/assets/a58befe4-b510-40ed-a41c-c21fc11569a2
 
 </td></tr></table>
 
-以上视频均为 MiniMax H3 本地生成效果。短视频合集与中式天宫使用适合 GitHub
-展示的高清预览版本，原始视频未加入源码仓库。
+以上视频均由配备 RTX 5050 Laptop GPU 8GB 显存和 24GB 内存的笔记本本地生成。
 
 [设备支持表](COMPATIBILITY.md) · [模型许可说明](MODEL-LICENSE-NOTICE.md) ·
 [第三方声明](THIRD-PARTY-NOTICES.md) · [问题反馈要求](SUPPORT.md)
@@ -47,12 +46,13 @@ https://github.com/user-attachments/assets/a58befe4-b510-40ed-a41c-c21fc11569a2
 
 ### 1. 真正面向不写代码的人
 
-正常情况下，你只需要记住两个文件：
+正常情况下，你只需要记住一个入口：
 
 - 第一次安装：双击 `00-START-HERE.cmd`
-- 以后启动：双击 `03-LAUNCH-STABLE.cmd`
+- 以后启动：使用安装器自动创建的桌面或开始菜单 `MiniMax H3 ComfyUI` 快捷方式
 
-其余脚本是验证、诊断或进阶工具，不需要先学会命令行。
+快捷方式根据实际安装目录动态生成，不写死盘符、用户名或电脑型号。其余脚本是验证、
+诊断或进阶工具，不需要先学会命令行。
 
 ### 2. 不是“理论上能跑”，而是有真实出片验证
 
@@ -147,12 +147,14 @@ Installation, model files and PyTorch CUDA checks passed.
 ```
 
 如果安装中断，重新运行 `00-START-HERE.cmd`，安装器会校验已有文件并从中断处继续。
+安装成功后会自动创建当前用户的桌面和开始菜单快捷方式，并询问是否立即启动
+ComfyUI。
 
 ## 第一次使用
 
 ### 1. 启动 ComfyUI
 
-双击安装目录里的：
+优先双击桌面或开始菜单里的 `MiniMax H3 ComfyUI`。也可以双击安装目录里的：
 
 ```text
 03-LAUNCH-STABLE.cmd
@@ -313,7 +315,13 @@ runtime\ComfyUI_windows_portable\python_embeded\python.exe
 3. 没有把 CMD 单独复制到桌面；
 4. 使用的是完成安装的同一目录里的 `03-LAUNCH-STABLE.cmd`。
 
-新版启动器会显示自己的完整路径和它期望找到的 Python 路径。
+新版启动器会显示自己的完整路径和它期望找到的 Python 路径。如果它位于已经完整
+解压的永久目录，并且旁边存在 `00-START-HERE.cmd`，还会询问是否直接开始安装；如果
+检测到自己运行于 Windows 临时解压目录，则会阻止把 44GB 环境错误安装到临时目录。
+
+安装器成功后会自动创建快捷方式，所以不要把 CMD 单独复制到桌面。如果以后移动了
+完整安装文件夹，在新位置运行 `10-CREATE-SHORTCUTS.ps1` 即可重建桌面和开始菜单
+快捷方式。
 
 ### 提示 8188 端口被占用
 
@@ -366,6 +374,7 @@ Face 和可选的 7-zip.org。诊断脚本默认不收集日志；任何诊断 Z
 - `07-OPEN-PAGEFILE-SETTINGS.cmd`：打开 Windows 虚拟内存设置；
 - `08-COLLECT-DIAGNOSTICS.ps1`：生成本地、需人工检查的诊断包；
 - `09-MONITOR-GPU.ps1`：记录生成时的显存、利用率、温度和功耗；
+- `10-CREATE-SHORTCUTS.ps1`：按当前实际安装目录创建或重建用户快捷方式；
 - `models-manifest.json`：模型 URL、大小、SHA-256 和存放路径；
 - `assets-manifest.json`：ComfyUI、7-Zip、官方工作流和示例素材清单。
 

@@ -14,4 +14,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate release source
         shell: pwsh
-        run: ./tests/Validate-Package.ps1
+        run: |
+          ./tests/Validate-Package.ps1
+          ./tests/Test-Shortcuts.ps1

@@ -2,7 +2,8 @@
 param(
     [switch]$SkipComfyUI,
     [switch]$SkipModels,
-    [switch]$AcceptModelLicense
+    [switch]$AcceptModelLicense,
+    [switch]$SkipShortcuts
 )
 
 Set-StrictMode -Version Latest
@@ -237,6 +238,15 @@ $state = [ordered]@{
 $stateJson = $state | ConvertTo-Json
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText((Join-Path $runtimeRoot 'install-state.json'), $stateJson, $utf8NoBom)
+
+if (-not $SkipShortcuts) {
+    try {
+        & (Join-Path $packageRoot '10-CREATE-SHORTCUTS.ps1')
+    } catch {
+        Write-Warning "Installation succeeded, but user shortcuts could not be created: $($_.Exception.Message)"
+        Write-Warning 'Run 10-CREATE-SHORTCUTS.ps1 manually from the installed folder.'
+    }
+}
 
 Write-Host "`n=== Installation complete ===" -ForegroundColor Green
 Write-Host "First launch: $packageRoot\03-LAUNCH-STABLE.cmd"

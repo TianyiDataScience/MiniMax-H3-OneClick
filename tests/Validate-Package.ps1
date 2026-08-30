@@ -14,6 +14,7 @@ $required = @(
     'PRIVACY.md', 'CONTRIBUTING.md', 'RELEASING.md',
     '00-START-HERE.cmd', '01-PREFLIGHT.ps1', '02-INSTALL.ps1',
     '03-LAUNCH-STABLE.cmd', '04-LAUNCH-BALANCED.cmd', '05-VERIFY.ps1',
+    '10-CREATE-SHORTCUTS.ps1',
     'models-manifest.json', 'assets-manifest.json',
     'workflows\official\OFFICIAL-H3-T2V.json',
     'workflows\official\OFFICIAL-H3-I2V.json',
