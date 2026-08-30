@@ -1,46 +1,59 @@
-name: Bug report
-description: Report a reproducible installer problem without private data.
-title: "[Bug]: "
+name: 安装器问题反馈
+description: 反馈能够稳定复现的一键安装器问题，请勿包含私人数据。
+title: "[问题反馈] "
 labels: [bug]
 body:
   - type: markdown
     attributes:
-      value: Do not upload model weights, credentials, private prompts, or unredacted logs.
+      value: |
+        提交前请先阅读 README、设备支持表和问题反馈要求。
+        严禁上传模型权重、账号凭据、私人提示词、未脱敏日志或个人路径。
   - type: input
     id: version
     attributes:
-      label: Installer version or commit
+      label: 安装器版本或提交编号
+      description: 可填写发布版本号，或仓库提交页面显示的短编号。
     validations:
       required: true
   - type: input
     id: launcher
     attributes:
-      label: Full launcher path (redact username if necessary)
+      label: 实际运行的启动文件和完整路径
+      description: 路径中如含 Windows 用户名，请先用星号替换。
     validations:
       required: true
   - type: textarea
     id: system
     attributes:
-      label: System
-      description: Windows version, GPU, VRAM, driver, RAM, and free disk space.
+      label: 电脑配置
+      description: 请填写 Windows 版本、显卡完整名称、显存、驱动版本、系统内存、剩余磁盘空间和虚拟内存设置。
     validations:
       required: true
   - type: textarea
     id: reproduction
     attributes:
-      label: Reproduction steps
+      label: 问题复现步骤
+      description: 请按顺序说明从运行哪个文件开始，到出现问题为止做了什么。
     validations:
       required: true
   - type: textarea
     id: error
     attributes:
-      label: Redacted error excerpt
+      label: 已脱敏的错误内容
+      description: 只粘贴能够说明问题的最短错误片段，不要直接上传未经检查的整份日志。
     validations:
       required: true
+  - type: textarea
+    id: workflow
+    attributes:
+      label: 工作流和生成参数
+      description: 如问题涉及生成，请填写文生视频或图生视频、分辨率、时长，以及 Stable 或 Balanced 启动模式。
+    validations:
+      required: false
   - type: checkboxes
     id: privacy
     attributes:
-      label: Privacy confirmation
+      label: 隐私确认
       options:
-        - label: I checked that this report contains no credentials, private prompts, model files, or unredacted personal paths.
+        - label: 我已确认本反馈不包含账号凭据、私人提示词、模型文件、未公开素材或未经脱敏的个人路径。
           required: true

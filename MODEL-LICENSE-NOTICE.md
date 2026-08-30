@@ -1,28 +1,13 @@
-# MiniMax H3 model license notice
+# MiniMax H3 模型许可特别说明
 
-This repository's MIT license covers only the original installer scripts and
-documentation. The MiniMax H3 model weights are **not** licensed under MIT and
-are not included in this repository or in its release archives.
+本仓库的 MIT 许可证只适用于本项目原创的一键安装器脚本和文档。MiniMax H3 模型权重**不采用 MIT 许可证**，也不会包含在本仓库或本项目发布的安装器压缩包中。
 
-Before downloading or using the model, read the complete upstream
-[MiniMax H3 Community License Agreement](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE).
-The upstream license, dated 2 August 2026, includes territorial, use,
-redistribution, disclosure, and commercial conditions. In particular, it
-defines the European Union, United Kingdom, Republic of Korea, and United
-States as excluded territories unless the user has separate authorization.
+下载或使用模型前，必须阅读完整的上游 [MiniMax H3 Community License Agreement](https://huggingface.co/MiniMaxAI/MiniMax-H3/blob/main/LICENSE)（MiniMax H3 社区许可协议）。截至2026年8月2日的上游许可文本包含地区、用途、再分发、公开披露和商业使用等条件；其中把欧盟、英国、韩国和美国定义为排除地区，除非使用者另行取得授权。
 
-The installer does not determine a user's location or legal rights. It requires
-the user to confirm that they have read the model license and are authorized to
-download and use the model in their jurisdiction. This confirmation is not
-legal advice and does not grant any model rights.
+本安装器不会判断使用者所在地，也不能判断使用者是否拥有相应法律权利。安装器只要求使用者确认已经阅读模型许可，并确认自己有权在所在地区下载和使用模型。这个确认不构成法律意见，也不会授予任何模型权利。
 
-If you are in an excluded territory, obtain the required authorization from
-MiniMax before downloading, running, displaying, or distributing the model or
-its outputs. The upstream model card lists `model@minimax.io` for model-license
-questions and the license lists `api@minimax.io` for certain authorization
-requests.
+如果你位于上游许可列出的排除地区，请在下载、运行、展示或分发模型及其生成内容之前，向 MiniMax 取得所需授权。上游模型页面列出的模型许可咨询邮箱为 `model@minimax.io`；许可文本还针对部分授权申请列出 `api@minimax.io`。
 
-Publicly distributed model outputs are also subject to the disclosure and
-acceptable-use requirements in the upstream license. Re-check the upstream
-license before each public release because its acceptable-use policy may be
-updated.
+公开发布模型生成内容时，还须遵守上游许可中的披露义务和可接受使用要求。每次公开发布前都应重新检查上游许可，因为其可接受使用政策可能更新。
+
+本说明仅用于提示许可边界，不构成法律意见；如需法律结论，请咨询具备资质的专业人士。

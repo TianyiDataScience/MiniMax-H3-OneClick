@@ -1,11 +1,11 @@
-MiniMax H3 One-Click Installer
-Copyright (c) 2026 MiniMax H3 One-Click Installer contributors
+MiniMax H3 一键安装器
+版权所有 (c) 2026 MiniMax H3 一键安装器贡献者
 
-The MIT License in LICENSE applies only to this repository's original installer
-code and documentation. It does not relicense MiniMax H3, ComfyUI, PyTorch,
-7-Zip, the official ComfyUI workflows, or any other third-party component.
+LICENSE 文件中的 MIT 许可证只适用于本仓库原创的一键安装器代码和文档。
+该许可证不会把 MiniMax H3、ComfyUI、PyTorch、7-Zip、ComfyUI 官方工作流
+或任何其他第三方组件重新许可为 MIT。
 
-MiniMax H3 is licensed under the MiniMax H3 Community License Agreement,
+MiniMax H3 适用 MiniMax H3 Community License Agreement（MiniMax H3 社区许可协议）。
 Copyright (c) 2026 MiniMax. All Rights Reserved.
 
-See MODEL-LICENSE-NOTICE.md and THIRD-PARTY-NOTICES.md before installation.
+安装前请阅读 MODEL-LICENSE-NOTICE.md 和 THIRD-PARTY-NOTICES.md。

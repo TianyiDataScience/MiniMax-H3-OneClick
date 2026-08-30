@@ -1,14 +1,34 @@
-# Support
+# 问题反馈要求
 
-Read `README.md`, `COMPATIBILITY.md`, and existing issues before filing a bug.
-Support covers this installer on configurations listed as verified or candidate;
-it does not cover unrelated ComfyUI custom nodes or unsupported operating systems.
+提交问题前，请先阅读 [README](README.md)、[设备兼容性与支持范围](COMPATIBILITY.md)，并搜索仓库中是否已经有人反馈同一问题。
 
-For a useful report, provide the installer version, exact launcher path, Windows
-version, GPU name/VRAM/driver, RAM, free disk, the failing step, and the smallest
-redacted error excerpt. Run `08-COLLECT-DIAGNOSTICS.ps1` only if needed and
-inspect its ZIP before sharing. Never post model weights, private prompts,
-credentials or unredacted personal paths.
+本项目负责处理一键安装器在“已验证基准机”和“正式支持”设备上的可复现问题。与本安装包无关的 ComfyUI 自定义节点、第三方插件和明确不支持的操作系统，不属于本项目的支持范围。
 
-Model-license questions must be directed to MiniMax or qualified legal counsel;
-project maintainers cannot grant model rights.
+## 反馈时必须提供
+
+1. 安装器版本号或 Git 提交编号。
+2. 实际双击或运行的启动文件名称，以及完整路径；路径中如含 Windows 用户名，请先脱敏。
+3. Windows 版本和系统类型。
+4. 显卡完整名称、显存容量、NVIDIA 驱动版本。
+5. 系统内存容量、剩余磁盘空间和虚拟内存设置。
+6. 出错发生在哪一步，以及从开始到出错的可重复操作步骤。
+7. 最短且足以说明问题的错误内容；请不要整份粘贴未经检查的日志。
+8. 如果问题涉及生成结果，请说明使用的是文生视频还是图生视频、分辨率、时长和启动模式。
+
+## 诊断文件与隐私要求
+
+只有在确实需要时才运行 `08-COLLECT-DIAGNOSTICS.ps1`。上传诊断 ZIP 前，必须由本人打开并检查内容，删除或遮盖个人信息。
+
+严禁在公开问题中上传或粘贴以下内容：
+
+- 模型权重或模型文件；
+- 密码、访问令牌、密钥和账号凭据；
+- 私人提示词、未公开图片或视频；
+- 没有脱敏的 Windows 用户名、个人目录和完整私人路径；
+- 与复现问题无关的整份日志或其他个人文件。
+
+不满足上述信息和隐私要求的问题，维护者可能会要求补充资料后再处理。
+
+## 模型许可问题
+
+有关 MiniMax H3 模型许可、地区限制、商业使用和再分发的问题，应咨询 MiniMax 或具备资质的法律专业人士。本项目维护者不能代表 MiniMax 授予模型使用权，也不能提供法律结论。

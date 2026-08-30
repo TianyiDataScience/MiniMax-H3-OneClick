@@ -376,22 +376,3 @@ MiniMax H3 使用单独的 Community License。2026-08-02 版本包含地区、�
 如果你的设备是 RTX 5050 Laptop GPU 8GB 或更高等级，并满足其余硬件要求，就可以
 按步骤安装。低于这个基准的 NVIDIA 设备目前属于未测试范围，也欢迎带着完整、已脱敏
 的真实出片证据反馈。我们会继续扩大实测设备名单。
-
----
-
-## English summary
-
-**Muzi Doesn't Code** shares this source-open Windows/NVIDIA one-click installer
-for MiniMax H3. It automates preflight checks, pinned downloads, resume support,
-SHA-256 verification, model placement, low-VRAM workflows, CUDA verification,
-diagnostics, and GPU monitoring.
-
-The verified baseline is an HP Victus 15-fb3xxx with Windows 11, an **RTX 5050
-Laptop GPU with 8GB VRAM**, and 24GB system RAM. RTX laptop GPUs at or above
-that model tier, and equivalent-or-higher RTX desktop GPUs, are supported when
-they also provide at least 8GB VRAM, an R580+ driver, and preferably 24GB+ RAM.
-Lower NVIDIA tiers have not been tested by this project.
-
-The repository's MIT license covers the original installer code and
-documentation only. MiniMax H3 weights are not bundled and remain subject to
-the separate upstream MiniMax H3 Community License.

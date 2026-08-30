@@ -1,59 +1,46 @@
-# Compatibility and support matrix
+# 设备兼容性与支持范围
 
-## Support levels
+## 支持等级说明
 
-`Verified baseline` means a complete installation, CUDA probe, native MiniMax
-H3 load, and real video generation were observed on that exact configuration.
-`Supported` means the NVIDIA RTX model tier is at least the verified RTX 5050
-Laptop GPU 8 GB baseline and all hard requirements are met. `Untested` covers
-lower NVIDIA tiers that may pass preflight but have no project evidence.
-`Unsupported` means this installer intentionally rejects or does not configure
-that platform; it does not mean ComfyUI itself cannot run there by another
-installation method.
+- **已验证基准机**：已在这台准确配置的电脑上完成安装、CUDA 检查、MiniMax H3 模型加载和真实视频生成。
+- **正式支持**：NVIDIA RTX 显卡等级不低于已经验证的 RTX 5050 Laptop GPU 8GB（笔记本版），并且同时满足全部硬性要求。
+- **未测试**：低于基准机的 NVIDIA 显卡。安装预检可能允许通过，但本项目目前没有完整实机证据，不承诺生成速度和稳定性。
+- **本安装包不支持**：安装器会主动拒绝或没有为该平台配置运行环境。这不代表 ComfyUI 不能通过其他安装方法运行。
 
-| Platform or device | Status | Exact scope |
+## 设备支持表
+
+| 设备或平台 | 支持状态 | 具体范围与说明 |
 |---|---|---|
-| HP Victus by HP Gaming Laptop 15-fb3xxx (Ryzen 5 240, **RTX 5050 Laptop GPU 8 GB**, Radeon 760M, 24 GB RAM), Windows 11 x64 build 26200 | Verified baseline | Driver 592.82, compute capability 12.0. Install, SHA-256 verification, CUDA, T2V/I2V, 480p and 1344x768 workflows, and concurrent OBS offload were exercised. |
-| Windows 10/11 x64 laptops with an NVIDIA RTX Laptop GPU at or above the RTX 5050 Laptop GPU 8 GB tier | Supported | Must still have at least 8 GB VRAM, R580+ driver, 24 GB recommended RAM, adequate page file and disk space. Laptop power limits and cooling affect speed. |
-| Windows 10/11 x64 desktops with an RTX GPU equivalent to or above the RTX 5050 baseline | Supported | Must meet the same VRAM, driver, RAM, page-file and disk requirements. |
-| NVIDIA GPU below the RTX 5050 Laptop baseline but still Turing-or-newer with at least 8 GB VRAM | Untested | Preflight may allow installation, but this project currently makes no speed or stability commitment for lower tiers. |
-| NVIDIA GPU with less than 8 GB VRAM | Unsupported by this installer | Preflight stops. No successful H3 generation has been established for this package. |
-| NVIDIA GTX 10 series and older; Volta | Unsupported by this build | The pinned CUDA 13 Windows build requires Turing (compute capability 7.5) or newer. A different CUDA 12.6/manual ComfyUI installation is a separate project. |
-| AMD discrete GPU or AMD-only APU | Unsupported | This package downloads the NVIDIA Windows Portable runtime and requires `nvidia-smi`. Radeon 760M is used only as an optional OBS/display offload device. |
-| Intel Arc / Intel-only graphics | Unsupported | No XPU runtime or Intel workflow is installed. |
-| Apple Silicon or Intel Mac | Unsupported | The entry points are Windows CMD/PowerShell and the runtime is Windows NVIDIA Portable. |
-| Linux, WSL, containers | Unsupported | No Linux Python, CUDA, path, service, or package-management flow is provided or tested. |
-| CPU-only | Unsupported | Although ComfyUI has CPU mode, this installer requires CUDA and the H3 workflow has not been validated on CPU. |
-| Phones, tablets, consoles, NAS devices | Unsupported | There is no native package or remote-server setup for these devices. |
+| HP Victus by HP Gaming Laptop 15-fb3xxx：Ryzen 5 240、**RTX 5050 Laptop GPU 8GB（笔记本版）**、Radeon 760M、24GB 内存、Windows 11 x64 build 26200 | **已验证基准机** | 使用 NVIDIA 592.82 驱动，计算能力 12.0。已经完成安装、SHA-256 完整性校验、CUDA 检查、文生视频、图生视频、480p、1344×768 工作流以及 OBS 核显卸载同时运行测试。 |
+| Windows 10/11 x64 笔记本，配备 **RTX 5050 Laptop GPU 8GB 或更高等级的 NVIDIA RTX Laptop GPU** | **正式支持** | 仍须具备至少8GB显存、R580或更新驱动；推荐24GB或更多内存，并准备足够的虚拟内存和磁盘空间。笔记本功耗释放与散热会影响速度。 |
+| Windows 10/11 x64 台式机，配备 **RTX 5050 同等级或更高等级的 NVIDIA RTX 台式显卡** | **正式支持** | 须满足相同的显存、驱动、内存、虚拟内存和磁盘要求。 |
+| 低于 RTX 5050 Laptop GPU 8GB 基准，但属于 Turing 或更新架构、且显存至少8GB的 NVIDIA 显卡 | **未测试** | 安装预检可能允许通过，但本项目尚无完整实机测试，目前不承诺生成速度和稳定性。 |
+| NVIDIA 显存低于8GB | **本安装包不支持** | 安装预检会停止；本项目尚未确认这类设备能够使用本包成功生成 H3 视频。 |
+| NVIDIA GTX 10 系列及更老显卡、Volta 架构 | **当前构建不支持** | 本包固定使用的 CUDA 13 Windows 构建要求 Turing（计算能力7.5）或更新架构。CUDA 12.6 或手动安装 ComfyUI 属于其他部署方案。 |
+| AMD 独立显卡，或只有 AMD 核显的电脑 | **不支持** | 本包下载 NVIDIA Windows Portable 运行环境，并依赖 `nvidia-smi`。Radeon 760M 只能作为可选的 OBS 编码和桌面显示卸载设备。 |
+| Intel Arc 或只有 Intel 核显的电脑 | **不支持** | 本包不会安装 XPU 运行环境或 Intel 专用工作流。 |
+| Apple Silicon Mac 或 Intel Mac | **不支持** | 本包入口为 Windows CMD/PowerShell，运行环境为 Windows NVIDIA Portable。 |
+| Linux、WSL、容器 | **不支持** | 本项目没有提供或测试 Linux 所需的 Python、CUDA、路径、服务和软件包管理流程。 |
+| 仅使用 CPU | **不支持** | 虽然 ComfyUI 本身存在 CPU 模式，但本安装包要求 CUDA，H3 工作流也没有进行纯 CPU 验证。 |
+| 手机、平板、游戏主机、NAS | **不支持** | 本项目没有为这些设备提供原生安装包或远程服务器部署流程。 |
 
-## Hard requirements enforced by preflight
+## 安装预检执行的硬性要求
 
-- Windows 10 or 11, 64-bit. Only Windows 11 has been verified by this project.
-- NVIDIA GPU with compute capability 7.5 or newer and at least 7,500 MiB as
-  reported by `nvidia-smi` (marketed 8 GB class or higher).
-- NVIDIA driver branch R580 or newer for the pinned CUDA 13 runtime.
-- At least 16 GB system RAM to pass; 24 GB or more is the supported target.
-  A 16-23 GB machine receives a warning and is not a verified configuration.
-- System-managed page file, or a manually allocated page file of at least
-  32 GiB.
-- At least 65 GiB free disk space; 90 GiB or more recommended.
-- Short, ASCII-only installation path, for example `C:\AI\MiniMax-H3`.
-- Network access to GitHub and Hugging Face during installation.
+- Windows 10 或 Windows 11，64位 x64；本项目实机验证使用 Windows 11。
+- NVIDIA 显卡计算能力不低于7.5，并且 `nvidia-smi` 报告的显存不得低于7500MiB，即市场标称8GB或更高等级。
+- NVIDIA 驱动须为 R580 分支或更新版本，以支持本包固定使用的 CUDA 13 运行环境。
+- 系统内存至少16GB才能通过预检；正式支持目标为24GB或更多。16—23GB会收到警告，不属于已验证配置。
+- Windows 虚拟内存采用“系统管理”，或手动分配至少32GiB。
+- 可用磁盘空间至少65GiB，建议90GiB或更多。
+- 安装路径应较短并且只含英文字母、数字等 ASCII 字符，例如 `C:\AI\MiniMax-H3`。
+- 安装期间必须能够访问 GitHub 和 Hugging Face。
 
-On a multi-NVIDIA-GPU system, preflight selects the compatible GPU with the
-most VRAM and writes its physical index to `runtime\selected-gpu.txt`.
-Launchers expose that device through `CUDA_VISIBLE_DEVICES`; verification uses
-the same selection.
+如果电脑有多张 NVIDIA 显卡，预检会选择符合要求且显存最大的显卡，并把它的物理编号写入 `runtime\selected-gpu.txt`。启动器通过 `CUDA_VISIBLE_DEVICES` 使用同一张显卡，验证脚本也会沿用这个选择。
 
-The integrated GPU is not an H3 requirement. It is only useful for moving OBS
-encoding and desktop rendering away from the NVIDIA GPU. Supported NVIDIA-only
-laptops and desktops can run without an AMD iGPU, but simultaneous recording
-may reduce available VRAM.
+核显不是运行 H3 的必要条件。核显只用于把 OBS 编码和桌面显示负载从 NVIDIA 显卡移开。只有 NVIDIA 显卡、没有 AMD 核显的正式支持设备仍可运行本安装包，但同时录制可能减少可用显存。
 
-## Evidence boundary
+## 实测证据边界
 
-The exact measured reference machine is the RTX 5050 Laptop GPU 8 GB system
-listed above. Higher-tier supported devices are expected to meet or exceed the
-GPU baseline, while real speed still varies with VRAM, laptop TGP, cooling,
-system RAM and storage. New measured configurations can be added to the table
-after a saved 5-second H3 MP4 and clean diagnostics report are provided.
+目前准确实测的参考设备是上表中的 RTX 5050 Laptop GPU 8GB（笔记本版）电脑。更高等级的正式支持设备在 GPU 等级上达到或超过基准，但实际速度仍会受显存、笔记本显卡功耗、散热、系统内存和硬盘性能影响。
+
+如要把新设备加入“已验证设备”名单，请提供一次成功生成的5秒 H3 MP4，以及经过本人检查并完成隐私脱敏的诊断报告。
