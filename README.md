@@ -1,15 +1,39 @@
 # MiniMax H3 Windows NVIDIA 一键安装包
 
-> 木子不写代码｜把复杂的本地 AI 部署，做成普通创作者也能完成的几次双击。
+> 一键完成 MiniMax H3 本地部署，让高质量视频生成真正跑在你的 NVIDIA 显卡电脑上。
 
-分享者与维护者：**木子不写代码**
+## 真实生成效果
+
+### 短视频合集
+
+https://github.com/user-attachments/assets/a4d12bbd-ea8c-4935-abd8-c2434f406b71
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <strong>中式天宫</strong>
+
+https://github.com/user-attachments/assets/4663648f-356a-4870-b5bc-1c453c0e53e2
+
+    </td>
+    <td width="50%" align="center">
+      <strong>Last Seed</strong>
+
+https://github.com/user-attachments/assets/a58befe4-b510-40ed-a41c-c21fc11569a2
+
+    </td>
+  </tr>
+</table>
+
+以上视频均为 MiniMax H3 本地生成效果。短视频合集与中式天宫使用适合 GitHub
+展示的高清预览版本，原始视频未加入源码仓库。
 
 [设备支持表](COMPATIBILITY.md) · [模型许可说明](MODEL-LICENSE-NOTICE.md) ·
 [第三方声明](THIRD-PARTY-NOTICES.md) · [问题反馈要求](SUPPORT.md)
 
 ## 这是什么
 
-这是“木子不写代码”为 Windows NVIDIA 电脑整理的 MiniMax H3 本地部署包。
+这是为 Windows NVIDIA 电脑整理的 MiniMax H3 本地部署包。
 
 你不需要自己安装 Python，不需要手动配置 CUDA，不需要到处寻找 ComfyUI 节点和
 模型路径。把压缩包完整解压，双击 `00-START-HERE.cmd`，安装器会自动完成：
