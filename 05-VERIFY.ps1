@@ -92,12 +92,19 @@ foreach ($file in $manifest.files) {
     Write-Host "[OK] $($file.name)" -ForegroundColor Green
 }
 
-$preset = Join-Path $packageRoot 'workflows\generated\NVIDIA-H3-T2V-480P-5s-Turbo8.json'
-if (Test-Path $preset) {
-    Write-Host '[OK] Windows NVIDIA low-VRAM workflow preset exists.' -ForegroundColor Green
-} else {
-    Write-Host '[FAIL] Windows NVIDIA low-VRAM workflow preset is missing.' -ForegroundColor Red
-    $failed = $true
+$workflowPresets = @(
+    'H3-T2V-480P-5s-Turbo8.json',
+    'H3-T2V-768P-5s-Turbo8.json',
+    'H3-I2V-480P-5s-Turbo8.json'
+)
+foreach ($workflowPreset in $workflowPresets) {
+    $preset = Join-Path $packageRoot (Join-Path 'workflows\generated' $workflowPreset)
+    if (Test-Path -LiteralPath $preset) {
+        Write-Host "[OK] Workflow preset: $workflowPreset" -ForegroundColor Green
+    } else {
+        Write-Host "[FAIL] Workflow preset is missing: $workflowPreset" -ForegroundColor Red
+        $failed = $true
+    }
 }
 
 try {

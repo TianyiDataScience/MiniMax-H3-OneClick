@@ -11,7 +11,7 @@ Mac 上打包成功不等于 RTX 5050 Laptop GPU 已跑通。以下 6 项全部�
 ## B. 首条视频验收
 
 - [ ] 用 `03-LAUNCH-STABLE.cmd` 启动，无 CUDA、缺节点或模型加载错误。
-- [ ] 导入 `NVIDIA-H3-T2V-480P-5s-Turbo8.json`，保持 0.4MP / 5秒 / Turbo 8步。
+- [ ] 导入 `H3-T2V-480P-5s-Turbo8.json`，保持 0.4MP / 5秒 / Turbo 8步。
 - [ ] Queue 后成功得到可播放 MP4，画面和立体声音轨都存在。
 - [ ] 生成前运行 `09-MONITOR-GPU.ps1`，记录从 Queue 到文件落盘的真实耗时，不用估算值代替。
 - [ ] 记录任务管理器或 `nvidia-smi` 的峰值显存、系统内存和页面文件占用。

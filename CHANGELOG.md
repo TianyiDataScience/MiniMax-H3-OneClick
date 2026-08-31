@@ -15,3 +15,4 @@
 - Added location-independent Desktop and Start Menu shortcuts created after installation.
 - Added a shortcut rebuild tool for installations moved to a new folder.
 - Changed the missing-runtime path from a dead-end error into safe install guidance.
+- Removed GPU-model and vendor prefixes from generated workflow filenames.

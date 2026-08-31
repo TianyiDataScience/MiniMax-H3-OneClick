@@ -173,7 +173,7 @@ http://127.0.0.1:8188
 在 ComfyUI 中选择 `Workflow → Open`，打开：
 
 ```text
-workflows\generated\NVIDIA-H3-T2V-480P-5s-Turbo8.json
+workflows\generated\H3-T2V-480P-5s-Turbo8.json
 ```
 
 安装器也会把工作流复制到 ComfyUI 的用户工作流目录，因此通常可以直接从工作流菜单
@@ -212,7 +212,7 @@ runtime\ComfyUI_windows_portable\ComfyUI\output\video\MiniMax_H3_WindowsNVIDIA
 Stable 模式首跑成功后，打开：
 
 ```text
-workflows\generated\NVIDIA-H3-I2V-480P-5s-Turbo8.json
+workflows\generated\H3-I2V-480P-5s-Turbo8.json
 ```
 
 在加载图片节点中选择输入图片，修改提示词，再点击 `Queue`。第一次 I2V 同样保持
@@ -226,6 +226,12 @@ workflows\generated\NVIDIA-H3-I2V-480P-5s-Turbo8.json
 2. 保持5秒，把分辨率提高到 0.5MP 或 0.6MP；
 3. 最后尝试 H3 原生 0.98MP，也就是约 1344×768；
 4. 只有 Stable 长时间稳定后，再尝试 `04-LAUNCH-BALANCED.cmd`。
+
+安装器已经生成对应的 768P 预设：
+
+```text
+workflows\generated\H3-T2V-768P-5s-Turbo8.json
+```
 
 不要第一次就同时提高分辨率、时长和步数。更高参数会明显增加显存、系统内存、页面
 文件、耗时和失败概率。

@@ -26,6 +26,35 @@ foreach ($relative in $required) {
     }
 }
 
+$installerText = Get-Content -Raw -LiteralPath (Join-Path $root '02-INSTALL.ps1')
+$verifyText = Get-Content -Raw -LiteralPath (Join-Path $root '05-VERIFY.ps1')
+$readmeText = Get-Content -Raw -LiteralPath (Join-Path $root 'README.md')
+$expectedWorkflowNames = @(
+    'H3-T2V-480P-5s-Turbo8.json',
+    'H3-T2V-768P-5s-Turbo8.json',
+    'H3-I2V-480P-5s-Turbo8.json'
+)
+foreach ($name in $expectedWorkflowNames) {
+    if ($installerText -notmatch [regex]::Escape($name)) {
+        Add-Failure "Installer does not generate workflow preset: $name"
+    }
+}
+foreach ($name in $expectedWorkflowNames) {
+    if ($verifyText -notmatch [regex]::Escape($name)) {
+        Add-Failure "Verification script does not check workflow preset: $name"
+    }
+    if ($readmeText -notmatch [regex]::Escape($name)) {
+        Add-Failure "README does not document workflow preset: $name"
+    }
+}
+$legacyWorkflowPattern = '(RTX5050|NVIDIA)-H3-(T2V|I2V)-[A-Za-z0-9-]+\.json'
+foreach ($relative in @('02-INSTALL.ps1','05-VERIFY.ps1','README.md','RTX5050-ACCEPTANCE-CHECKLIST-ZH.md')) {
+    $content = Get-Content -Raw -LiteralPath (Join-Path $root $relative)
+    if ($content -match $legacyWorkflowPattern) {
+        Add-Failure "Legacy device-prefixed workflow filename found in: $relative"
+    }
+}
+
 Get-ChildItem -LiteralPath $root -Filter '*.ps1' -File -Recurse | ForEach-Object {
     $tokens = $null
     $errors = $null

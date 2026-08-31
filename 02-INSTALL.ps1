@@ -215,9 +215,9 @@ $officialI2V = Join-Path $generatedWorkflows 'OFFICIAL-H3-I2V.json'
 Copy-VerifiedAsset -Source (Join-Path $packageRoot 'workflows\official\OFFICIAL-H3-T2V.json') -Destination $officialT2V -ExpectedSha256 '2400b01a7c8acae3fed038c0372f08bacb90d2cdf915febadbe7e3f9802506ea'
 Copy-VerifiedAsset -Source (Join-Path $packageRoot 'workflows\official\OFFICIAL-H3-I2V.json') -Destination $officialI2V -ExpectedSha256 '4dc94e9ea308c1d60409e7f55dba5e2788dab4659c2dbb90f1e9481498767540'
 
-$presetT2V = Join-Path $generatedWorkflows 'NVIDIA-H3-T2V-480P-5s-Turbo8.json'
-$presetT2V768 = Join-Path $generatedWorkflows 'NVIDIA-H3-T2V-768P-5s-Turbo8.json'
-$presetI2V = Join-Path $generatedWorkflows 'NVIDIA-H3-I2V-480P-5s-Turbo8.json'
+$presetT2V = Join-Path $generatedWorkflows 'H3-T2V-480P-5s-Turbo8.json'
+$presetT2V768 = Join-Path $generatedWorkflows 'H3-T2V-768P-5s-Turbo8.json'
+$presetI2V = Join-Path $generatedWorkflows 'H3-I2V-480P-5s-Turbo8.json'
 Set-H3WorkflowPreset -Source $officialT2V -Destination $presetT2V -Aspect '16:9 (Widescreen)'
 Set-H3WorkflowPreset -Source $officialT2V -Destination $presetT2V768 -Aspect '16:9 (Widescreen)' -Megapixels 0.98 -LandscapeWidth 1344 -LandscapeHeight 768
 Set-H3WorkflowPreset -Source $officialI2V -Destination $presetI2V -Aspect '16:9 (Widescreen)'
