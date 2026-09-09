@@ -79,7 +79,9 @@ function Invoke-ResumableDownload {
 
     $partialInfo = Get-Item $partial
     if ($ExpectedBytes -gt 0 -and $partialInfo.Length -ne $ExpectedBytes) {
-        throw "Size mismatch for $($partialInfo.Name): got $($partialInfo.Length), expected $ExpectedBytes"
+        $badPath = "$Destination.bad-$([guid]::NewGuid().ToString('N'))"
+        Move-Item -LiteralPath $partial -Destination $badPath
+        throw "Size mismatch for $($partialInfo.Name): got $($partialInfo.Length), expected $ExpectedBytes. The invalid file was preserved as $badPath; rerun to download a clean copy."
     }
     if ($ExpectedSha256) {
         Write-Host "[HASH] SHA-256: $($partialInfo.Name)" -ForegroundColor DarkGray
@@ -119,7 +121,14 @@ function Get-SevenZip {
         if ($candidate -and (Test-Path $candidate)) { return $candidate }
     }
     $downloaded = Join-Path $downloadsRoot '7zr.exe'
-    Invoke-ResumableDownload -Url 'https://www.7-zip.org/a/7zr.exe' -Destination $downloaded -ExpectedBytes 602112 -ExpectedSha256 '56b8cc9f4971cef253644fafe54063ed7fdca551d4dee0f8c6baa81b855acd72'
+    $assetManifest = Get-Content -Raw -LiteralPath (Join-Path $packageRoot 'assets-manifest.json') | ConvertFrom-Json
+    $extractor = @($assetManifest.remoteFiles | Where-Object { $_.name -eq '7zr.exe' })
+    if ($extractor.Count -ne 1) { throw 'Expected exactly one pinned 7zr.exe entry in assets-manifest.json.' }
+    try {
+        Invoke-ResumableDownload -Url $extractor[0].url -Destination $downloaded -ExpectedBytes $extractor[0].sizeBytes -ExpectedSha256 $extractor[0].sha256
+    } catch {
+        throw "7-Zip download/verification failed: $($_.Exception.Message) Install 7-Zip from https://www.7-zip.org/ in its default folder, then rerun 00-START-HERE.cmd. No code edits are needed; existing verified downloads will be reused."
+    }
     return $downloaded
 }
 
@@ -182,9 +191,9 @@ if (-not $SkipModels -and -not $AcceptModelLicense) {
 }
 
 if (-not $SkipComfyUI -and -not (Test-ComfyUIInstall)) {
+    $sevenZip = Get-SevenZip
     $archive = Join-Path $downloadsRoot 'ComfyUI_windows_portable_nvidia.7z'
     Invoke-ResumableDownload -Url 'https://github.com/Comfy-Org/ComfyUI/releases/download/v0.34.0/ComfyUI_windows_portable_nvidia.7z' -Destination $archive -ExpectedBytes 2146721943 -ExpectedSha256 'ed57cc6b19ae3d83add1ecebfdd56b25e04e0008cf0fe9af43a4ad8797e2a24c'
-    $sevenZip = Get-SevenZip
     Write-Host "`n[EXTRACT] ComfyUI Windows Portable" -ForegroundColor Cyan
     & $sevenZip x $archive "-o$runtimeRoot" -y
     if ($LASTEXITCODE -ne 0) { throw '7-Zip could not extract ComfyUI.' }

@@ -120,6 +120,23 @@ C:\AI\MiniMax-H3
 不要在 ZIP 压缩包窗口里直接双击脚本；Windows 可能只临时解出一个 CMD，旁边没有
 安装所需文件。也不要只复制 `03-LAUNCH-STABLE.cmd` 到桌面。
 
+**不限定 C 盘。** 也可以把整个安装包解压到 `D:\AI\MiniMax-H3` 或
+`E:\AI\MiniMax-H3`，再双击 `00-START-HERE.cmd`。安装位置就是脚本所在文件夹，
+运行环境、下载缓存、模型和默认输出都放在这里，不需要改代码。
+使用短英文路径，目标磁盘至少留出 65GiB，建议 90GiB 以上。
+Windows 临时文件和虚拟内存的位置仍由系统设置决定。
+
+移动已有安装时，先关闭安装器和 ComfyUI，再移动整个文件夹（包括 runtime）。
+从新位置运行入口脚本即可续装；已经安装完成的，请运行
+`10-CREATE-SHORTCUTS.ps1` 更新快捷方式。
+
+旧版虚拟内存预检或 7zr.exe 校验报错时，更新安装包脚本和 `assets-manifest.json`，
+保留已有 `runtime` 文件夹后重试。新版处理空查询和单个磁盘的系统管理设置，
+虚拟内存不足或查询失败时会警告而不会阻止安装；生成视频前仍需通过
+`07-OPEN-PAGEFILE-SETTINGS.cmd` 启用系统管理并按提示重启，以免内存不足。
+如果解压工具下载失败，可从 [7-Zip 官网](https://www.7-zip.org/) 安装到默认目录，
+再运行入口脚本，无需修改代码。
+
 ### 第二步：更新 NVIDIA 驱动
 
 安装 R580 或更新的 NVIDIA Studio Driver / Game Ready Driver，然后重启电脑。

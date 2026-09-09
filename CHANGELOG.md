@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Fix empty page-file queries on Windows PowerShell 5.1; recognize per-drive system management and warn instead of blocking installation when paging needs attention.
+- Pin 7zr.exe to official 26.03 with verified size/SHA-256 from the asset manifest; preserve invalid completed downloads for clean retries.
+- Check the extractor before the large ComfyUI download and document the installed 7-Zip fallback.
+- Clarify D:/E: installation and moving the complete installation folder.
+
 - Prepared a clean source-only release layout.
 - Added MIT licensing for original installer code and explicit model-license boundaries.
 - Added a verified/candidate/unsupported device matrix.

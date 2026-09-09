@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-08-27",
+  "updatedAt": "2026-09-09",
   "remoteFiles": [
     {
       "name": "ComfyUI_windows_portable_nvidia.7z",
@@ -11,10 +11,10 @@
     },
     {
       "name": "7zr.exe",
-      "version": "official standalone extractor",
-      "url": "https://www.7-zip.org/a/7zr.exe",
-      "sizeBytes": 602112,
-      "sha256": "56b8cc9f4971cef253644fafe54063ed7fdca551d4dee0f8c6baa81b855acd72"
+      "version": "26.03",
+      "url": "https://github.com/ip7z/7zip/releases/download/26.03/7zr.exe",
+      "sizeBytes": 602624,
+      "sha256": "ad4c82fadcbdf93c03b4fc440f300509c7d60c5c2f4d183e35d9d70d6957037d"
     }
   ],
   "files": [

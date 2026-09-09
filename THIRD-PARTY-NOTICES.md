@@ -6,7 +6,7 @@
 
 - **MiniMax H3 模型权重**：适用 MiniMax H3 Community License Agreement（MiniMax H3 社区许可协议）。模型权重不包含在本仓库中。使用前必须阅读[模型许可特别说明](MODEL-LICENSE-NOTICE.md)。
 - **ComfyUI Windows Portable 0.34.0**：从 Comfy-Org 官方发布页面下载。ComfyUI 采用 GPL-3.0 许可证；便携压缩包还包含分别采用其他许可证的依赖项。相应声明和源码链接由上游发行包提供。
-- **7-Zip 独立解压程序 `7zr.exe`**：当电脑没有安装 7-Zip 时，本安装器会从 7-zip.org 原样下载。7-Zip 官方说明其大部分源码采用 GNU LGPL，部分代码受到 unRAR 限制。详情请阅读[7-Zip 官方许可文件](https://www.7-zip.org/license.txt)。
+- **7-Zip 独立解压程序 `7zr.exe`**：当电脑没有安装 7-Zip 时，本安装器从官方 `ip7z/7zip` GitHub 固定版本发布页下载并验证大小和 SHA-256。7-Zip 官方说明其大部分源码采用 GNU LGPL，部分代码受到 unRAR 限制。详情请阅读[7-Zip 官方许可文件](https://www.7-zip.org/license.txt)。
 
 ## 随本仓库提供的第三方内容
 

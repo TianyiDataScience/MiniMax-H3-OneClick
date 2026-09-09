@@ -10,6 +10,22 @@ function Write-Ok([string]$Message) { Write-Host "[OK]   $Message" -ForegroundCo
 function Write-Warn([string]$Message) { Write-Host "[WARN] $Message" -ForegroundColor Yellow }
 function Write-Fail([string]$Message) { Write-Host "[FAIL] $Message" -ForegroundColor Red }
 
+function Get-PagefileStatus {
+    param($ComputerSystem, [object[]]$Usage = @(), [object[]]$Settings = @())
+    # An empty CIM result has no Measure-Object.Sum in Windows PowerShell 5.1.
+    [long]$allocatedMiB = 0
+    foreach ($entry in $Usage) {
+        if ($null -ne $entry) { $allocatedMiB += [long]$entry.AllocatedBaseSize }
+    }
+    $managed = $ComputerSystem.AutomaticManagedPagefile -eq $true
+    foreach ($entry in $Settings) {
+        if ($null -ne $entry -and $entry.InitialSize -eq 0 -and $entry.MaximumSize -eq 0) {
+            $managed = $true # Per-drive system management, even if global auto is off.
+        }
+    }
+    [pscustomobject]@{ Managed = $managed; AllocatedMiB = $allocatedMiB }
+}
+
 $packageRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $critical = New-Object System.Collections.Generic.List[string]
 
@@ -45,14 +61,21 @@ if ($ramGiB -ge 22) {
     $critical.Add("Only $ramGiB GiB RAM detected; this package is not intended for that configuration.")
 }
 
-$automaticPagefile = (Get-CimInstance Win32_ComputerSystem).AutomaticManagedPagefile
-$pagefileMiB = [int](Get-CimInstance Win32_PageFileUsage -ErrorAction SilentlyContinue | Measure-Object -Property AllocatedBaseSize -Sum).Sum
-if ($automaticPagefile) {
-    Write-Ok "Windows virtual memory is system-managed (currently allocated: $pagefileMiB MiB)."
-} elseif ($pagefileMiB -ge 32768) {
-    Write-Ok "Manual page file is at least 32 GiB (currently allocated: $pagefileMiB MiB)."
-} else {
-    $critical.Add("Virtual memory is not system-managed and only $pagefileMiB MiB is allocated. Enable system-managed paging and restart Windows.")
+try {
+    $paging = Get-PagefileStatus -ComputerSystem (Get-CimInstance Win32_ComputerSystem) `
+        -Usage @(Get-CimInstance Win32_PageFileUsage -ErrorAction Stop) `
+        -Settings @(Get-CimInstance Win32_PageFileSetting -ErrorAction Stop)
+    if ($paging.Managed) {
+        Write-Ok "Windows virtual memory is system-managed (currently allocated: $($paging.AllocatedMiB) MiB)."
+    } elseif ($paging.AllocatedMiB -ge 32768) {
+        Write-Ok "Manual page file is at least 32 GiB (currently allocated: $($paging.AllocatedMiB) MiB)."
+    } else {
+        Write-Warn "Only $($paging.AllocatedMiB) MiB of active page file detected. Installation can continue, but video generation may run out of memory."
+        Write-Warn 'Before generation, open 07-OPEN-PAGEFILE-SETTINGS.cmd, enable system-managed paging on a drive with enough free space, apply and restart Windows. No script editing is needed.'
+    }
+} catch {
+    Write-Warn "Could not query Windows virtual memory: $($_.Exception.Message)"
+    Write-Warn 'Installation can continue. Check system-managed paging using 07-OPEN-PAGEFILE-SETTINGS.cmd before generating video; restart after changing it.'
 }
 
 $nvidiaSmiCommand = Get-Command nvidia-smi.exe -ErrorAction SilentlyContinue
