@@ -62,20 +62,46 @@ function Invoke-ResumableDownload {
                 return
             }
         }
-        $badPath = "$Destination.bad-$(Get-Date -Format yyyyMMdd-HHmmss)"
-        Move-Item -Path $Destination -Destination $badPath
+        $badPath = "$Destination.bad-$([guid]::NewGuid().ToString('N'))"
+        Move-Item -LiteralPath $Destination -Destination $badPath
         Write-Warning "Existing file did not verify and was preserved as $badPath"
     }
 
     $partial = "$Destination.part"
+    if (Test-Path -LiteralPath $partial) {
+        $length = (Get-Item -LiteralPath $partial).Length
+        if ($ExpectedBytes -gt 0 -and $length -ge $ExpectedBytes) {
+            $hashOk = $length -eq $ExpectedBytes -and (-not $ExpectedSha256 -or ((Get-FileHash -Algorithm SHA256 -LiteralPath $partial).Hash -ieq $ExpectedSha256))
+            if ($length -eq $ExpectedBytes -and $hashOk) {
+                Move-Item -LiteralPath $partial -Destination $Destination
+                Write-Host "[OK] Recovered complete, verified partial: $Destination" -ForegroundColor Green
+                return
+            }
+            $badPath = "$Destination.bad-$([guid]::NewGuid().ToString('N'))"
+            Move-Item -LiteralPath $partial -Destination $badPath
+            Write-Warning "Invalid partial preserved as $badPath; downloading a clean copy."
+        }
+    }
     Write-Host "`n[DOWNLOAD] $Url" -ForegroundColor Cyan
+    Assert-DownloadSpace -Destination $Destination -ExpectedBytes $ExpectedBytes
+    $resuming = (Test-Path -LiteralPath $partial) -and (Get-Item -LiteralPath $partial).Length -gt 0
     $curlArgs = @(
         '--location', '--fail', '--retry', '10', '--retry-delay', '5',
         '--connect-timeout', '30', '--continue-at', '-',
-        '--output', $partial, $Url
+        '--write-out', '%{http_code}', '--output', $partial, $Url
     )
-    & curl.exe @curlArgs
-    if ($LASTEXITCODE -ne 0) { throw "Download failed. Run 00-START-HERE.cmd again to resume: $Url" }
+    $httpStatus = & curl.exe @curlArgs
+    $downloadExit = $LASTEXITCODE
+    if ($resuming -and ($downloadExit -eq 33 -or ($downloadExit -eq 22 -and "$httpStatus" -match '416$'))) {
+        # A server/proxy refusing Range cannot be repaired by repeating -C -.
+        $badPath = "$Destination.bad-$([guid]::NewGuid().ToString('N'))"
+        if (Test-Path -LiteralPath $partial) { Move-Item -LiteralPath $partial -Destination $badPath }
+        Write-Warning "Server refused resume. Previous partial preserved as $badPath; retrying once from byte zero."
+        Assert-DownloadSpace -Destination $Destination -ExpectedBytes $ExpectedBytes
+        $httpStatus = & curl.exe --location --fail --retry 10 --retry-delay 5 --connect-timeout 30 --write-out '%{http_code}' --output $partial $Url
+        $downloadExit = $LASTEXITCODE
+    }
+    if ($downloadExit -ne 0) { throw "Download failed (curl $downloadExit). Existing partial data is retained. Check network access and run 00-START-HERE.cmd again: $Url" }
 
     $partialInfo = Get-Item $partial
     if ($ExpectedBytes -gt 0 -and $partialInfo.Length -ne $ExpectedBytes) {
@@ -87,13 +113,25 @@ function Invoke-ResumableDownload {
         Write-Host "[HASH] SHA-256: $($partialInfo.Name)" -ForegroundColor DarkGray
         $hash = (Get-FileHash -Algorithm SHA256 -Path $partial).Hash.ToLowerInvariant()
         if ($hash -ne $ExpectedSha256.ToLowerInvariant()) {
-            $badPath = "$Destination.bad-$(Get-Date -Format yyyyMMdd-HHmmss)"
-            Move-Item -Path $partial -Destination $badPath
+            $badPath = "$Destination.bad-$([guid]::NewGuid().ToString('N'))"
+            Move-Item -LiteralPath $partial -Destination $badPath
             throw "SHA-256 mismatch for $($partialInfo.Name). The bad file was preserved as $badPath; the next run will download a clean copy."
         }
     }
-    Move-Item -Path $partial -Destination $Destination -Force
+    Move-Item -LiteralPath $partial -Destination $Destination
     Write-Host "[OK] $Destination" -ForegroundColor Green
+}
+
+function Assert-DownloadSpace {
+    param([string]$Destination, [long]$ExpectedBytes)
+    if ($ExpectedBytes -le 0) { return }
+    [long]$partialBytes = 0
+    if (Test-Path -LiteralPath "$Destination.part") { $partialBytes = (Get-Item -LiteralPath "$Destination.part").Length }
+    $drive = [IO.DriveInfo]::new([IO.Path]::GetPathRoot([IO.Path]::GetFullPath($Destination)))
+    $needed = [math]::Max([long]0, [long]($ExpectedBytes - $partialBytes)) + 1GB
+    if ($drive.AvailableFreeSpace -lt $needed) {
+        throw "Not enough free space to download/recover $Destination. Need $([math]::Ceiling($needed / 1GB)) GiB additional free space. Preserved .bad-* files also occupy disk space; inspect them before removing any."
+    }
 }
 
 function Copy-VerifiedAsset {

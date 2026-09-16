@@ -18,3 +18,5 @@ jobs:
           ./tests/Validate-Package.ps1
           ./tests/Test-Shortcuts.ps1
           powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tests/Test-InstallerFeedback.ps1
+          ./tests/Test-InstallerReliability.ps1
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tests/Test-InstallerReliability.ps1

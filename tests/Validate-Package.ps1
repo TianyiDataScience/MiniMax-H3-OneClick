@@ -14,7 +14,7 @@ $required = @(
     'PRIVACY.md', 'CONTRIBUTING.md', 'RELEASING.md',
     '00-START-HERE.cmd', '01-PREFLIGHT.ps1', '02-INSTALL.ps1',
     '03-LAUNCH-STABLE.cmd', '04-LAUNCH-BALANCED.cmd', '05-VERIFY.ps1',
-    '10-CREATE-SHORTCUTS.ps1',
+    '10-CREATE-SHORTCUTS.ps1', '11-LAUNCH.ps1', 'installer-common.ps1', 'cuda-probe.py',
     'models-manifest.json', 'assets-manifest.json',
     'workflows\official\OFFICIAL-H3-T2V.json',
     'workflows\official\OFFICIAL-H3-I2V.json',
@@ -89,7 +89,7 @@ Get-ChildItem -LiteralPath $root -File -Recurse | ForEach-Object {
 }
 
 $secretPattern = '(?i)(sk-[a-z0-9_-]{16,}|hf_[a-z0-9]{16,}|AKIA[0-9A-Z]{16}|BEGIN (RSA|OPENSSH|EC) PRIVATE KEY|authorization\s*:\s*bearer\s+[a-z0-9._-]+)'
-$textExtensions = @('.ps1','.cmd','.md','.json','.yml','.yaml','.txt','.gitignore','.gitattributes','.editorconfig')
+$textExtensions = @('.ps1','.py','.cmd','.md','.json','.yml','.yaml','.txt','.gitignore','.gitattributes','.editorconfig')
 Get-ChildItem -LiteralPath $root -File -Recurse | Where-Object { $textExtensions -contains $_.Extension -or $_.Name.StartsWith('.') } | ForEach-Object {
     $content = Get-Content -Raw -LiteralPath $_.FullName
     if ($content -match $secretPattern) { Add-Failure "Secret-like value found: $($_.FullName)" }

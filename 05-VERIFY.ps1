@@ -7,6 +7,8 @@ $ErrorActionPreference = 'Stop'
 $OutputEncoding = [Console]::OutputEncoding
 
 $packageRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+. (Join-Path $packageRoot 'installer-common.ps1')
+$gpuUuid = ''
 $comfyRoot = Join-Path $packageRoot 'runtime\ComfyUI_windows_portable\ComfyUI'
 $manifest = Get-Content -Raw -Path (Join-Path $packageRoot 'models-manifest.json') | ConvertFrom-Json
 $failed = $false
@@ -37,23 +39,19 @@ if (Test-Path $versionFile) {
 
 $pythonPath = Join-Path $packageRoot 'runtime\ComfyUI_windows_portable\python_embeded\python.exe'
 if (Test-Path $pythonPath) {
-    $selectedGpuPath = Join-Path $packageRoot 'runtime\selected-gpu.txt'
-    if (Test-Path -LiteralPath $selectedGpuPath) {
-        $env:CUDA_VISIBLE_DEVICES = (Get-Content -Raw -LiteralPath $selectedGpuPath).Trim()
-        Write-Host "[INFO] Testing selected physical NVIDIA GPU index $env:CUDA_VISIBLE_DEVICES" -ForegroundColor DarkGray
-    }
-    # Python single-quoted dictionary keys survive Windows PowerShell 5.1's
-    # native argument quoting. Double-quoted keys are stripped and cause a
-    # misleading NameError even when CUDA is healthy.
-    $probeCode = "import json,torch; ok=torch.cuda.is_available(); print(json.dumps({'torch':torch.__version__,'cuda_runtime':torch.version.cuda,'cuda_available':ok,'device':torch.cuda.get_device_name(0) if ok else None,'vram_bytes':torch.cuda.get_device_properties(0).total_memory if ok else 0}))"
-    $probeOutput = & $pythonPath -s -c $probeCode 2>&1
+    try {
+    $gpuUuid = Get-SelectedGpuUuid -PackageRoot $packageRoot
+    $env:CUDA_VISIBLE_DEVICES = $gpuUuid
+    Write-Host "[INFO] Testing selected NVIDIA GPU $gpuUuid" -ForegroundColor DarkGray
+    $probeOutput = & $pythonPath -s (Join-Path $packageRoot 'cuda-probe.py')
     $probeExit = $LASTEXITCODE
     $probeLine = $probeOutput | Where-Object { $_ -match '^\{' } | Select-Object -Last 1
     if ($probeExit -eq 0 -and $probeLine) {
         $probe = $probeLine | ConvertFrom-Json
-        if ($probe.cuda_available) {
+        if ($probe.cuda_available -and $probe.kernel_ok) {
             $vramGiB = [math]::Round($probe.vram_bytes / 1GB, 2)
             Write-Host "[OK] PyTorch CUDA: $($probe.device), $vramGiB GiB VRAM, torch $($probe.torch), CUDA $($probe.cuda_runtime)" -ForegroundColor Green
+            Write-Host "[OK] Real CUDA operations: $($probe.tested_dtypes -join ', '); GPU UUID matched." -ForegroundColor Green
         } else {
             Write-Host '[FAIL] Embedded PyTorch cannot access CUDA.' -ForegroundColor Red
             $failed = $true
@@ -61,6 +59,10 @@ if (Test-Path $pythonPath) {
     } else {
         Write-Host '[FAIL] Embedded Python/PyTorch CUDA probe failed:' -ForegroundColor Red
         $probeOutput | ForEach-Object { Write-Host $_ -ForegroundColor Red }
+        $failed = $true
+    }
+    } catch {
+        Write-Host "[FAIL] CUDA verification: $($_.Exception.Message)" -ForegroundColor Red
         $failed = $true
     }
 } else {
@@ -109,8 +111,12 @@ foreach ($workflowPreset in $workflowPresets) {
 
 try {
     $stats = Invoke-RestMethod -Uri 'http://127.0.0.1:8188/system_stats' -TimeoutSec 3
-    Write-Host '[OK] ComfyUI server is responding on port 8188.' -ForegroundColor Green
-    if ($stats.devices) { $stats.devices | Format-Table name,type,vram_total,vram_free -AutoSize }
+    if (Test-ComfyServerIdentity -Stats $stats -MainPath (Join-Path $comfyRoot 'main.py') -UserPath (Join-Path $comfyRoot 'user') -GpuUuid $gpuUuid) {
+        Write-Host '[OK] This ComfyUI installation is responding on port 8188.' -ForegroundColor Green
+        if ($stats.devices) { $stats.devices | Format-Table name,type,vram_total,vram_free -AutoSize }
+    } else {
+        Write-Host '[WARN] Port 8188 responds, but its installation/GPU identity does not match. Close the other/older instance before launching this package.' -ForegroundColor Yellow
+    }
 } catch {
     Write-Host '[INFO] ComfyUI is not running. Start 03-LAUNCH-STABLE.cmd, then run this check again.' -ForegroundColor Yellow
 }

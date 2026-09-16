@@ -27,6 +27,7 @@ function Get-PagefileStatus {
 }
 
 $packageRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+. (Join-Path $packageRoot 'installer-common.ps1')
 $critical = New-Object System.Collections.Generic.List[string]
 
 # ComfyUI's embedded Python and some third-party packages still hit the
@@ -40,11 +41,14 @@ if ($longPathProbe.Length -ge 260) {
 if ($packageRoot -match '[^\x00-\x7F]') {
     $critical.Add('The installation path contains non-ASCII characters. Use a short English-only path such as C:\AI\MiniMax-H3 to avoid embedded Python and logging failures.')
 }
+if ($packageRoot -match '[\[\]%!&^]') {
+    $critical.Add('Use a short folder path without brackets or CMD special characters, for example D:\AI\MiniMax-H3.')
+}
 
 Write-Host "`n=== MiniMax H3 / Windows NVIDIA preflight ===" -ForegroundColor Cyan
 
 $os = Get-CimInstance Win32_OperatingSystem
-if (-not [Environment]::Is64BitOperatingSystem) {
+if (-not [Environment]::Is64BitOperatingSystem -or $env:PROCESSOR_ARCHITECTURE -eq 'ARM64' -or $env:PROCESSOR_ARCHITEW6432 -eq 'ARM64') {
     $critical.Add('This package requires 64-bit Windows.')
 } elseif ([version]$os.Version -lt [version]'10.0') {
     $critical.Add("Windows $($os.Version) is too old. Windows 10 or 11 x64 is required.")
@@ -52,13 +56,19 @@ if (-not [Environment]::Is64BitOperatingSystem) {
     Write-Ok "64-bit Windows: $($os.Caption)"
 }
 
-$ramGiB = [math]::Round((Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB, 1)
+$computer = Get-CimInstance Win32_ComputerSystem
+$modules = @()
+try { $modules = @(Get-CimInstance Win32_PhysicalMemory -ErrorAction Stop) }
+catch { Write-Warn 'Installed RAM capacity could not be read; using OS-visible memory with a hardware-reservation allowance.' }
+$memory = Get-MemoryCapacity -VisibleBytes $computer.TotalPhysicalMemory -Modules $modules
+$ramGiB = [math]::Round($memory.VisibleBytes / 1GB, 2)
+if ($memory.Reliable) { Write-Host "[RAM] Installed: $([math]::Round($memory.InstalledBytes / 1GB, 2)) GiB; OS-visible: $ramGiB GiB (not current free memory)." }
 if ($ramGiB -ge 22) {
     Write-Ok "Physical memory: $ramGiB GiB (24 GB class)"
-} elseif ($ramGiB -ge 16) {
+} elseif ($memory.MeetsMinimum) {
     Write-Warn "Physical memory: $ramGiB GiB. H3 may page heavily; 24 GB or more is preferred."
 } else {
-    $critical.Add("Only $ramGiB GiB RAM detected; this package is not intended for that configuration.")
+    $critical.Add("Only $ramGiB GiB OS-visible RAM detected and no confirmed 16 GB installed capacity. At least a 16 GB class system is required; 24 GB or more is recommended.")
 }
 
 try {
@@ -88,16 +98,21 @@ if (-not $nvidiaSmiPath) {
 if (-not $nvidiaSmiPath) {
     $critical.Add('nvidia-smi was not found. Install/update the NVIDIA driver first.')
 } else {
-    $gpuRows = & $nvidiaSmiPath --query-gpu=index,name,memory.total,driver_version,compute_cap --format=csv,noheader,nounits
+    $gpuRows = & $nvidiaSmiPath --query-gpu=index,name,memory.total,driver_version,compute_cap,uuid --format=csv,noheader,nounits
     if ($LASTEXITCODE -ne 0) {
         $critical.Add('nvidia-smi could not query the GPU. Reinstall the NVIDIA driver.')
     } else {
         $gpus = foreach ($row in $gpuRows) {
             Write-Host "[GPU]  $row" -ForegroundColor Cyan
             $parts = $row -split ','
-            if ($parts.Count -lt 5) { continue }
+            if ($parts.Count -lt 6) { continue }
+            if ($parts[2].Trim() -notmatch '^\d+$' -or $parts[4].Trim() -notmatch '^\d+\.\d+$' -or $parts[5].Trim() -notmatch '^GPU-[0-9a-fA-F-]{36}$') {
+                Write-Warn 'Skipped a GPU with unavailable memory, compute capability or UUID.'
+                continue
+            }
             [pscustomobject]@{
                 Index = [int]$parts[0].Trim()
+                Uuid = $parts[5].Trim()
                 Name = $parts[1].Trim()
                 MemoryMiB = [int]$parts[2].Trim()
                 Driver = $parts[3].Trim()
@@ -115,7 +130,7 @@ if (-not $nvidiaSmiPath) {
             if ($selectedGpu.Name -match 'RTX 5050 Laptop') {
                 Write-Ok 'Verified baseline detected: RTX 5050 Laptop GPU.'
             } else {
-                Write-Ok 'This GPU meets the installer architecture and VRAM floor. Compare its RTX model tier with the RTX 5050 Laptop baseline in COMPATIBILITY.md.'
+                Write-Ok 'This GPU meets the architecture and VRAM floor. It is a compatibility candidate, not an independently verified device; see COMPATIBILITY.md.'
             }
             $driverMajorMatch = [regex]::Match($selectedGpu.Driver, '^(\d+)')
             if (-not $driverMajorMatch.Success) {
@@ -140,28 +155,30 @@ if ($videoNames -match 'Radeon') {
 $root = [System.IO.Path]::GetPathRoot($packageRoot)
 $drive = Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='$($root.TrimEnd('\'))'"
 $freeGiB = [math]::Round($drive.FreeSpace / 1GB, 1)
-if ($freeGiB -ge 90) {
+$spacePlan = Get-InstallSpacePlan -PackageRoot $packageRoot
+$neededGiB = [math]::Ceiling($spacePlan.RequiredBytes / 1GB)
+Write-Host "[DISK] Estimated additional space: $neededGiB GiB, including extraction and 8 GiB headroom. Existing downloads are counted by size and will still be hash-verified."
+if ($drive.FreeSpace -lt $spacePlan.RequiredBytes) {
+    $critical.Add("Only $freeGiB GiB free on $root; this installation/resume needs approximately $neededGiB GiB more. Free space or move the complete folder to another drive.")
+} elseif ($freeGiB -ge 90) {
     Write-Ok "Free space on ${root}: $freeGiB GiB"
-} elseif ($freeGiB -ge 65) {
-    Write-Warn "Free space on ${root}: $freeGiB GiB. This is workable but tight; 90+ GiB is recommended."
 } else {
-    $critical.Add("Only $freeGiB GiB free on $root; at least 65 GiB is required and 90+ GiB is recommended.")
+    Write-Warn "Free space on ${root}: $freeGiB GiB; enough for the remaining installation estimate. Leave additional room for page-file growth and video generation."
 }
 
 $curlCommand = Get-Command curl.exe -ErrorAction SilentlyContinue
 if (-not $curlCommand) {
     $critical.Add('Windows curl.exe was not found; the resumable downloader cannot run.')
 } else {
-    $networkChecks = @(
-        'https://github.com/Comfy-Org/ComfyUI/releases/download/v0.34.0/ComfyUI_windows_portable_nvidia.7z',
-        'https://huggingface.co/Comfy-Org/MiniMax-H3/resolve/main/vae/minimax_h3_audio_vae_fp32.safetensors?download=true'
-    )
+    $assets = Get-Content -Raw -LiteralPath (Join-Path $packageRoot 'assets-manifest.json') | ConvertFrom-Json
+    $models = Get-Content -Raw -LiteralPath (Join-Path $packageRoot 'models-manifest.json') | ConvertFrom-Json
+    $networkChecks = @($assets.remoteFiles[0].url, $models.files[0].url)
     foreach ($url in $networkChecks) {
         & $curlCommand.Source --silent --show-error --head --location --fail --max-time 30 --output NUL $url
         if ($LASTEXITCODE -eq 0) {
             Write-Ok "Network access: $(([uri]$url).Host)"
         } else {
-            $critical.Add("Cannot reach required download host: $(([uri]$url).Host)")
+            $critical.Add("Cannot reach required download host: $(([uri]$url).Host). This is separate from RAM/GPU checks. Check connectivity, proxy/firewall settings and retry; do not edit out verification checks.")
         }
     }
 }
@@ -176,8 +193,8 @@ $runtimeRoot = Join-Path $packageRoot 'runtime'
 if (-not (Test-Path -LiteralPath $runtimeRoot)) {
     New-Item -ItemType Directory -Path $runtimeRoot -Force | Out-Null
 }
-Set-Content -LiteralPath (Join-Path $runtimeRoot 'selected-gpu.txt') -Value $selectedGpu.Index -Encoding ASCII
-Write-Ok "GPU selection saved for launchers: physical NVIDIA index $($selectedGpu.Index)"
+Set-Content -LiteralPath (Join-Path $runtimeRoot 'selected-gpu.txt') -Value $selectedGpu.Uuid -Encoding ASCII
+Write-Ok "GPU selection saved for launchers: $($selectedGpu.Uuid)"
 
 Write-Host "`nPreflight passed. Keep AC power connected and close heavy apps before generation." -ForegroundColor Green
 exit 0

@@ -34,25 +34,11 @@ if not exist "%PORTABLE%\python_embeded\python.exe" (
   exit /b 1
 )
 
-powershell.exe -NoProfile -Command "try { $r=Invoke-RestMethod -Uri 'http://127.0.0.1:8188/system_stats' -TimeoutSec 2; if ($r.devices) { exit 0 } }; exit 1" >nul 2>nul
-if not errorlevel 1 (
-  echo An existing ComfyUI service is already running at http://127.0.0.1:8188
-  start "" "http://127.0.0.1:8188"
-  exit /b 0
-)
-
-if exist "%ROOT%runtime\selected-gpu.txt" set /p "CUDA_VISIBLE_DEVICES="<"%ROOT%runtime\selected-gpu.txt"
-if defined CUDA_VISIBLE_DEVICES echo Using selected physical NVIDIA GPU index %CUDA_VISIBLE_DEVICES%.
-
-if not exist "%ROOT%runtime\logs" mkdir "%ROOT%runtime\logs"
-
 echo Stable mode: dynamic offload, low-VRAM hint, 1.5 GB VRAM reserve.
 echo Keep this window open while ComfyUI is running.
 
-pushd "%PORTABLE%"
-"python_embeded\python.exe" -s "ComfyUI\main.py" --windows-standalone-build --auto-launch --lowvram --reserve-vram 1.5 --disable-pinned-memory --preview-method none --verbose INFO "%ROOT%runtime\logs\comfyui-stable.log"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%11-LAUNCH.ps1" -Mode Stable
 set "CODE=%ERRORLEVEL%"
-popd
 
 if not "%CODE%"=="0" (
   echo.

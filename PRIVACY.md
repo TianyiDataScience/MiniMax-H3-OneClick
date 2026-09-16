@@ -2,7 +2,7 @@
 
 The installer does not send project telemetry. Preflight makes direct HEAD
 requests to GitHub and Hugging Face, and installation downloads from GitHub,
-Hugging Face, and optionally 7-zip.org. Those services receive ordinary network
+Hugging Face (including pinned 7-Zip releases on GitHub). Those services receive ordinary network
 metadata such as the user's IP address and user agent.
 
 `08-COLLECT-DIAGNOSTICS.ps1` creates a local ZIP containing hardware and system
