@@ -44,11 +44,12 @@ if errorlevel 1 (
 )
 
 echo.
-echo Running the local model and PyTorch CUDA verification...
+echo Running the local model, CUDA and isolated ComfyUI startup verification...
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%ROOT%05-VERIFY.ps1"
 if errorlevel 1 (
   echo.
-  echo Installation completed, but verification failed. Run 08-COLLECT-DIAGNOSTICS.ps1.
+  echo Files are installed, but verification failed. This installation is NOT ready yet.
+  echo Read the error above. Run 08-COLLECT-DIAGNOSTICS.ps1 for a local report.
   pause
   exit /b 1
 )

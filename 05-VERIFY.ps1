@@ -109,6 +109,26 @@ foreach ($workflowPreset in $workflowPresets) {
     }
 }
 
+if (-not $failed) {
+    Write-Host '[INFO] Checking actual ComfyUI startup (up to 180 seconds; isolated temporary directories, no video generation).' -ForegroundColor Cyan
+    try {
+        $startupOutput = & $pythonPath -s (Join-Path $packageRoot 'runtime-probe.py') --comfy-root $comfyRoot --timeout 180
+        $startupExit = $LASTEXITCODE
+        $startup = ($startupOutput -join "`n") | ConvertFrom-Json
+        if ($startupExit -ne 0 -or -not $startup.startup_ok) {
+            Write-Host "[FAIL] ComfyUI startup did not pass: $($startup.reason)" -ForegroundColor Red
+            Write-Host $startup.details -ForegroundColor Red
+            Write-Host 'If Windows application control blocked a DLL, review Windows protection events or contact the device administrator. Do not disable security or remove verification checks.' -ForegroundColor Yellow
+            $failed = $true
+        } else {
+            Write-Host '[OK] ComfyUI built-in startup/dependency check passed. Custom nodes and video generation are not covered by this check.' -ForegroundColor Green
+        }
+    } catch {
+        Write-Host "[FAIL] ComfyUI startup verification failed: $($_.Exception.Message)" -ForegroundColor Red
+        $failed = $true
+    }
+}
+
 try {
     $stats = Invoke-RestMethod -Uri 'http://127.0.0.1:8188/system_stats' -TimeoutSec 3
     if (Test-ComfyServerIdentity -Stats $stats -MainPath (Join-Path $comfyRoot 'main.py') -UserPath (Join-Path $comfyRoot 'user') -GpuUuid $gpuUuid) {
@@ -128,5 +148,5 @@ if ($FullHash) {
 }
 
 if ($failed) { exit 1 }
-Write-Host "`nInstallation, model files and PyTorch CUDA checks passed. A queued 5-second generation is still required for final H3 validation." -ForegroundColor Green
+Write-Host "`nInstallation, model files, PyTorch CUDA and ComfyUI startup checks passed. A queued 5-second generation is still required for final H3 validation." -ForegroundColor Green
 exit 0

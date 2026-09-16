@@ -18,3 +18,11 @@ On 2026-09-16, a bounded ComfyUI startup recheck could not complete in the curre
 The runtime/dependencies and Windows security policy were not modified by this fix. Do not interpret unit tests, CI success, or earlier generation evidence as proof that this current host's full startup recheck passed. Security-policy investigation requires reviewing the relevant Windows protection events/administrator policy; disabling protection is not an installer remedy.
 
 No new GPU model, multi-GPU hardware run, Windows 10 install, or D/E-drive hardware installation was added to the verified list.
+
+## Follow-up self-review: enforce startup verification
+
+The verifier previously checked CUDA execution but did not require ComfyUI's dependency/startup test to pass. `05-VERIFY.ps1` now runs `runtime-probe.py` and returns failure on a failed import, malformed probe result, nonzero exit, or a 180-second timeout. The installer must not proceed to its ready/launch prompt on that failure. The check uses temporary user/input/output/temp directories, an in-memory database, disabled custom nodes, and ComfyUI's built-in quick-test mode; no browser, video generation or user-project writes are requested.
+
+Seven new Python tests cover command isolation/GPU forwarding, dependency failure, timeout, launch errors, missing paths/GPU, real child success/failure exit propagation, and real child timeout cleanup. Existing regression tests remain in place. CI now checks every native test process exit code immediately, so a later passing test cannot mask an earlier failure.
+
+On the affected host, the new probe correctly returned `startup_ok: false` and exit code 1 for the SciPy `_arpacklib` application-control block. `_dop` and `_arpacklib` were compared against the official PyPI SciPy 1.18.1 cp313 Windows AMD64 wheel, SHA-256 `559ed65f60c1af5a03f3912605a1b5114f522c7c32fb23c3376ae8f03219fe28`; both local modules matched the official bytes. No dependency replacement or security-policy changes were made. This verifies failure detection, not successful current-host startup.

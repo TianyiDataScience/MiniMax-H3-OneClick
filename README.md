@@ -162,12 +162,17 @@ Windows 临时文件和虚拟内存的位置仍由系统设置决定。
 最终应看到类似提示：
 
 ```text
-Installation, model files and PyTorch CUDA checks passed.
+Installation, model files, PyTorch CUDA and ComfyUI startup checks passed.
 ```
 
 如果安装中断，重新运行 `00-START-HERE.cmd`，安装器会校验已有文件并从中断处继续。
 安装成功后会自动创建当前用户的桌面和开始菜单快捷方式，并询问是否立即启动
 ComfyUI。
+
+验证不仅识别显卡，还执行实际 CUDA 运算及一次最长 180 秒的 ComfyUI 内置节点启动检查。
+启动检查使用隔离的临时目录和内存数据库，不生成视频、不启动浏览器、不改已有项目，结束后清理临时目录。
+依赖加载失败、被系统安全策略拦截或超时都会停止，不能显示“验证通过”。自装第三方节点不在此项检查范围内，
+最终仍需真实生成一条 5 秒视频确认 H3 出片。
 
 ## 第一次使用
 
@@ -396,7 +401,7 @@ Windows 安全中心的保护历史记录或联系设备管理员，核对被拦
 - `08-COLLECT-DIAGNOSTICS.ps1`：生成本地、需人工检查的诊断包；
 - `09-MONITOR-GPU.ps1`：记录生成时的显存、利用率、温度和功耗；
 - `10-CREATE-SHORTCUTS.ps1`：按当前实际安装目录创建或重建用户快捷方式；
-- `11-LAUNCH.ps1`、`installer-common.ps1`、`cuda-probe.py`：身份/容量检查与 CUDA 实际运算，由入口自动调用；
+- `11-LAUNCH.ps1`、`installer-common.ps1`、`cuda-probe.py`、`runtime-probe.py`：身份/容量检查、CUDA 运算与隔离启动验证，由入口自动调用；
 - `models-manifest.json`：固定版本模型 URL、大小、SHA-256 和存放路径；
 - `assets-manifest.json`：ComfyUI、7-Zip、官方工作流和示例素材清单。
 

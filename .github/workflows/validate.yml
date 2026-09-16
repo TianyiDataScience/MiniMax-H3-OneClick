@@ -18,5 +18,11 @@ jobs:
           ./tests/Validate-Package.ps1
           ./tests/Test-Shortcuts.ps1
           powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tests/Test-InstallerFeedback.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           ./tests/Test-InstallerReliability.ps1
           powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tests/Test-InstallerReliability.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python -B -m unittest discover -s tests -p test_runtime_probe.py -v
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./tests/Test-StartupGate.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
